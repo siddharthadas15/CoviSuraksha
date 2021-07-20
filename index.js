@@ -2,6 +2,8 @@ const express=require('express');
 const app=express();
 const path=require('path');
 const mongoose=require('mongoose');
+const flash=require('connect-flash');
+const session=require('express-session');
 const methodOverride=require('method-override');
 const ejsMate=require('ejs-mate');
 const Post=require('./models/post');
@@ -9,6 +11,8 @@ const Review=require('./models/review');
 const ExpressError=require('./utils/ExpressError');
 const catchAsync=require('./utils/catchAsync.js');
 const {postSchema,reviewSchema}=require('./schemas.js');
+const posts=require('./routes/posts');
+const reviews=require('./routes/reviews');
 
 mongoose.connect('mongodb://localhost:27017/CoviSuraksha', { useNewUrlParser: true, useUnifiedTopology: true,useCreateIndex:true })
 
@@ -25,6 +29,26 @@ app.set('view engine','ejs');
 app.set('views',path.join(__dirname,'views'));
 app.use(express.urlencoded({extended:true}));
 app.use(methodOverride('_method'));
+app.use(express.static(path.join(__dirname,'public')));
+
+const sessionConfig={
+  secret:'#2467#9090*/324##configsessionuid15',
+  resave:false,
+  saveUninitialized:true,
+  cookie:{
+    httpOnly:true,
+    expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
+    maxAge: 1000 * 60 * 60 * 24 * 7
+  }
+}
+app.use(session(sessionConfig));
+
+app.use(flash());
+app.use((req,res,next)=>{
+res.locals.success=req.flash('success');
+res.locals.error=req.flash('error');
+next();
+});
 
 
 const validatePost= (req,res,next)=>{
@@ -51,77 +75,15 @@ const validateReview= (req,res,next)=>{
   next();
   }
   
-
+app.use('/posts',posts);
+app.use('/posts/:id/reviews',reviews);
 app.get('/',(req,res)=>{
 
 res.render('home');
 });
 
-app.get('/posts',catchAsync(async(req,res)=>{
-const posts=await Post.find({});
-res.render('posts/index',{posts});
-}));
 
 
-app.get('/posts/new',(req,res)=>{
-    res.render('posts/new');
-    });
-
-app.get('/posts/:id',catchAsync(async(req,res)=>{
-  const post=await Post.findById(req.params.id).populate('reviews');
-  console.log(post);
-res.render('posts/show',{post});
-}));
-
-
-app.post('/posts',validatePost,catchAsync(async (req,res,next)=>{
-
-const post=new Post(req.body.post);
-await post.save();
-res.redirect(`/posts/${post._id}`);
-  
-}));
-
-
-app.get('/posts/:id/edit',catchAsync(async(req,res)=>{
-    const post=await Post.findById(req.params.id);
-  res.render('posts/edit',{post});
-  
-  }));
-
-
-app.put('/posts/:id',validatePost,catchAsync(async(req,res)=>{
-const {id}=req.params;
-const post=await Post.findByIdAndUpdate(id,{...req.body.post});
-res.redirect(`/posts/${post._id}`);
-}));
-
-
-
-app.delete('/posts/:id',catchAsync(async (req,res)=>{
-const {id}=req.params;
-await Post.findByIdAndDelete(id);
-res.redirect('/posts');
-}));
-
-
-app.post('/posts/:id/reviews',validateReview,catchAsync(async(req,res)=>{
-const {id}=req.params;
-const post = await Post.findById(id);
-const review=new Review(req.body.review);
-post.reviews.push(review);
-await review.save();
-await post.save();
-res.redirect(`/posts/${id}`);
-}));
-
-app.delete('/posts/:id/reviews/:reviewId',catchAsync(async(req,res)=>{
-const {id,reviewId}=req.params;
-await Post.findByIdAndUpdate(id,{$pull:{reviews:reviewId}});
-await Review.findByIdAndRemove(reviewId);
-res.redirect(`/posts/${id}`);
-
-}));
 
 
 app.all('*',(req,res,next)=>
