@@ -4,7 +4,7 @@
   "description": "\"covisurksha \u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[Ca\u001b[C\u001b[C\u001b[ksha web app\"",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js"
   },
   "author": "siddharthadas15",
   "license": "ISC",
@@ -12,11 +12,15 @@
     "@mapbox/mapbox-sdk": "^0.13.0",
     "cloudinary": "^1.26.0",
     "connect-flash": "^0.1.1",
+    "connect-mongo": "^3.2.0",
     "dotenv": "^10.0.0",
     "ejs": "^3.1.6",
     "ejs-mate": "^3.0.0",
     "express": "^4.17.1",
+    "express-mongo-sanitize": "^2.1.0",
     "express-session": "^1.17.2",
+    "helmet": "^4.6.0",
+    "i": "^0.3.6",
     "joi": "^17.4.0",
     "method-override": "^3.0.0",
     "mongoose": "^5.12.12",
@@ -24,6 +28,7 @@
     "multer-storage-cloudinary": "^4.0.0",
     "passport": "^0.4.1",
     "passport-local": "^1.0.0",
-    "passport-local-mongoose": "^6.1.0"
+    "passport-local-mongoose": "^6.1.0",
+    "sanitize-html": "^2.4.0"
   }
 }
