@@ -16,7 +16,7 @@ const sample = array => array[Math.floor(Math.random() * array.length)];
 
 const seedDB = async ()=>{
     await Post.deleteMany({});
-   for(let i=0;i<50;i++)
+   for(let i=0;i<500;i++)
    {
        const random1000=Math.floor(Math.random()*1000);
        const post=new Post({
@@ -36,7 +36,10 @@ const seedDB = async ()=>{
         ],
         geometry: {
           type: "Point",
-          coordinates: [-113.1331, 47.0202]
+          coordinates: [
+              cities[random1000].longitude,
+              cities[random1000].latitude,
+          ]
       },
            description:'  Lorem ipsum dolor sit amet consectetur adipisicing elit. Veniam, voluptates deleniti illum omnis autem labore numquam consequuntur ad alias id vitae! Unde, minima harum. Temporibus repellat perferendis cupiditate ipsum nemo?'
            

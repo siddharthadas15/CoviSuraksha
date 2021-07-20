@@ -1,7 +1,7 @@
 const mongoose=require('mongoose');
 const Review=require('./review');
 const Schema=mongoose.Schema;
-
+const opts = { toJSON: { virtuals: true } };
 const ImageSchema = new Schema({
     url: String,
     filename: String
@@ -38,9 +38,14 @@ reviews:[
         type: Schema.Types.ObjectId,
         ref:'Review'
     }
-]
-});
+],
 
+},opts);
+PostSchema.virtual('properties.popUpMarkup').get(function () {
+    return `
+    <strong><a href="/posts/${this._id}">${this.title}</a><strong>
+    <p>${this.description.substring(0,30)}...</p>`
+});
 PostSchema.post('findOneAndDelete',async function(doc){
 if(doc)
 {
