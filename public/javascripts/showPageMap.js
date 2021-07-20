@@ -10,7 +10,7 @@ const map = new mapboxgl.Map({
     center: post.geometry.coordinates, // starting position [lng, lat]
     zoom: 10 // starting zoom
 });
-
+map.addControl(new mapboxgl.NavigationControl());
 console.log(post.geometry.coordinates)
 new mapboxgl.Marker()
     .setLngLat(post.geometry.coordinates)

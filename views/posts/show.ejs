@@ -1,7 +1,7 @@
 <% layout('layouts/boilerplate')%>
 <link rel="stylesheet" href="/stylesheets/stars.css">
 
-<div class="row">
+<div class="row ">
     <div class="col-6 ">
         <div id="postCarousel" class="carousel slide" data-ride="carousel">
 
@@ -24,7 +24,7 @@
             </a>
             <% } %>
         </div>
-        <div id='map' style='width: 400px; height: 300px;'></div>
+        
         <div class="card mb-3">
             <div class="card-body">
                 <h5 class="card-title"><%= post.title%></h5>
@@ -50,6 +50,8 @@
   
     </div>
     <div class="col-6">
+        <div id='map' ></div>
+    
         <% if(currentUser) {%> 
         <h2>Leave a Review</h2>
         <form action="/posts/<%=post._id%>/reviews" method="POST" class="mb-3 needs-validation" novalidate>
@@ -94,7 +96,7 @@
                 </div>
             </div>
             <% } %>
-    </div>
+   
 </div>
 <script>
     const mapToken = '<%-process.env.MAPBOX_TOKEN%>';
