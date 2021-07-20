@@ -1,8 +1,10 @@
 <% layout('layouts/boilerplate')%>
 <link rel="stylesheet" href="/stylesheets/stars.css">
+
 <div class="row">
     <div class="col-6 ">
         <div id="postCarousel" class="carousel slide" data-ride="carousel">
+
             <div class="carousel-inner">
                 <% post.images.forEach((img, i) => {  %>
                 <div class="carousel-item <%= i === 0 ? 'active' : ''%>">
@@ -22,6 +24,7 @@
             </a>
             <% } %>
         </div>
+        <div id='map' style='width: 400px; height: 300px;'></div>
         <div class="card mb-3">
             <div class="card-body">
                 <h5 class="card-title"><%= post.title%></h5>
@@ -93,3 +96,10 @@
             <% } %>
     </div>
 </div>
+<script>
+    const mapToken = '<%-process.env.MAPBOX_TOKEN%>';
+    const post =<%- JSON.stringify(post) %>
+    console.log(mapToken);
+</script>
+
+<script src="/javascripts/showPageMap.js"></script>
