@@ -5,9 +5,10 @@ const mongoose=require('mongoose');
 const methodOverride=require('method-override');
 const ejsMate=require('ejs-mate');
 const Post=require('./models/post');
+const Review=require('./models/review');
 const ExpressError=require('./utils/ExpressError');
 const catchAsync=require('./utils/catchAsync.js');
-const {postSchema}=require('./schemas.js');
+const {postSchema,reviewSchema}=require('./schemas.js');
 
 mongoose.connect('mongodb://localhost:27017/CoviSuraksha', { useNewUrlParser: true, useUnifiedTopology: true,useCreateIndex:true })
 
@@ -27,10 +28,7 @@ app.use(methodOverride('_method'));
 
 
 const validatePost= (req,res,next)=>{
-  //   console.log(req.body.post);
-//  if(!req.body.post)
-//  throw new ExpressError('Invalid Post Data',400);
-
+ 
 const {error}=postSchema.validate(req.body);
 if(error)
 {
@@ -41,8 +39,21 @@ else
 next();
 }
 
+const validateReview= (req,res,next)=>{
+  console.log(req.body);
+  const {error}=reviewSchema.validate(req.body);
+  if(error)
+  {
+    const msg=error.details.map(el=>el.message).join(',');
+    throw new ExpressError(msg,400);
+  }
+  else
+  next();
+  }
+  
 
 app.get('/',(req,res)=>{
+
 res.render('home');
 });
 
@@ -57,9 +68,9 @@ app.get('/posts/new',(req,res)=>{
     });
 
 app.get('/posts/:id',catchAsync(async(req,res)=>{
-  const post=await Post.findById(req.params.id);
+  const post=await Post.findById(req.params.id).populate('reviews');
+  console.log(post);
 res.render('posts/show',{post});
-
 }));
 
 
@@ -92,6 +103,26 @@ const {id}=req.params;
 await Post.findByIdAndDelete(id);
 res.redirect('/posts');
 }));
+
+
+app.post('/posts/:id/reviews',validateReview,catchAsync(async(req,res)=>{
+const {id}=req.params;
+const post = await Post.findById(id);
+const review=new Review(req.body.review);
+post.reviews.push(review);
+await review.save();
+await post.save();
+res.redirect(`/posts/${id}`);
+}));
+
+app.delete('/posts/:id/reviews/:reviewId',catchAsync(async(req,res)=>{
+const {id,reviewId}=req.params;
+await Post.findByIdAndUpdate(id,{$pull:{reviews:reviewId}});
+await Review.findByIdAndRemove(reviewId);
+res.redirect(`/posts/${id}`);
+
+}));
+
 
 app.all('*',(req,res,next)=>
 {
