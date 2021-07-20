@@ -23,7 +23,17 @@ const seedDB = async ()=>{
            location:`${cities[random1000].city}, ${cities[random1000].state}`,
            author:'60c24182e73ef05fc89f28ba',
            title: `${sample(descriptors)} ${sample(places)}`,
-           image: 'https://source.unsplash.com/collection/483251',
+           images: [
+            {
+                url: 'https://res.cloudinary.com/sd15/image/upload/v1623441694/CoviSuraksha/jvws1yewir3ivtkk541r.jpg',
+                filename: 'CoviSuraksha/jvws1yewir3ivtkk541r'
+              },
+              {              
+                url: 'https://res.cloudinary.com/sd15/image/upload/v1623441695/CoviSuraksha/p3lqwmj7h1siik0on5xx.jpg',
+                filename: 'CoviSuraksha/p3lqwmj7h1siik0on5xx'
+              }
+          
+        ],
            description:'  Lorem ipsum dolor sit amet consectetur adipisicing elit. Veniam, voluptates deleniti illum omnis autem labore numquam consequuntur ad alias id vitae! Unde, minima harum. Temporibus repellat perferendis cupiditate ipsum nemo?'
            
            
