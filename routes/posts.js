@@ -4,6 +4,7 @@ const ExpressError=require('../utils/ExpressError');
 const catchAsync=require('../utils/catchAsync.js');
 const Post=require('../models/post');
 const {postSchema}=require('../schemas.js');
+const {isLoggedIn}=require('../middleware.js');
 
 const validatePost= (req,res,next)=>{
  
@@ -25,7 +26,7 @@ router.get('/',catchAsync(async(req,res)=>{
     }));
     
     
-    router.get('/new',(req,res)=>{
+    router.get('/new',isLoggedIn,(req,res)=>{
         res.render('posts/new');
         });
     
@@ -41,7 +42,7 @@ router.get('/',catchAsync(async(req,res)=>{
     }));
     
     
-    router.post('/',validatePost,catchAsync(async (req,res,next)=>{
+    router.post('/',isLoggedIn,validatePost,catchAsync(async (req,res,next)=>{
     
     const post=new Post(req.body.post);
     await post.save();
@@ -51,7 +52,7 @@ router.get('/',catchAsync(async(req,res)=>{
     }));
     
     
-    router.get('/:id/edit',catchAsync(async(req,res)=>{
+    router.get('/:id/edit',isLoggedIn,catchAsync(async(req,res)=>{
         const post=await Post.findById(req.params.id);
         if(!post)
         {
@@ -64,7 +65,7 @@ router.get('/',catchAsync(async(req,res)=>{
       }));
     
     
-    router.put('/:id',validatePost,catchAsync(async(req,res)=>{
+    router.put('/:id',isLoggedIn,validatePost,catchAsync(async(req,res)=>{
     const {id}=req.params;
     const post=await Post.findByIdAndUpdate(id,{...req.body.post});
     req.flash('success','Successfully updated the post!');
@@ -73,7 +74,7 @@ router.get('/',catchAsync(async(req,res)=>{
     
     
     
-    router.delete('/:id',catchAsync(async (req,res)=>{
+    router.delete('/:id',isLoggedIn,catchAsync(async (req,res)=>{
     const {id}=req.params;
     await Post.findByIdAndDelete(id);
     req.flash('success','Post Deleted!');

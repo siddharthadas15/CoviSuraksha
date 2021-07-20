@@ -6,13 +6,17 @@ const flash=require('connect-flash');
 const session=require('express-session');
 const methodOverride=require('method-override');
 const ejsMate=require('ejs-mate');
+const passport=require('passport');
+const LocalStrategy=require('passport-local');
 const Post=require('./models/post');
 const Review=require('./models/review');
 const ExpressError=require('./utils/ExpressError');
 const catchAsync=require('./utils/catchAsync.js');
 const {postSchema,reviewSchema}=require('./schemas.js');
-const posts=require('./routes/posts');
-const reviews=require('./routes/reviews');
+const postRoutes=require('./routes/posts');
+const reviewRoutes=require('./routes/reviews');
+const userRoutes=require('./routes/user');
+const User=require('./models/user');
 
 mongoose.connect('mongodb://localhost:27017/CoviSuraksha', { useNewUrlParser: true, useUnifiedTopology: true,useCreateIndex:true })
 
@@ -44,7 +48,13 @@ const sessionConfig={
 app.use(session(sessionConfig));
 
 app.use(flash());
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 app.use((req,res,next)=>{
+res.locals.currentUser=req.user;
 res.locals.success=req.flash('success');
 res.locals.error=req.flash('error');
 next();
@@ -75,10 +85,10 @@ const validateReview= (req,res,next)=>{
   next();
   }
   
-app.use('/posts',posts);
-app.use('/posts/:id/reviews',reviews);
+app.use('/posts',postRoutes);
+app.use('/posts/:id/reviews',reviewRoutes);
+app.use('/',userRoutes);
 app.get('/',(req,res)=>{
-
 res.render('home');
 });
 
