@@ -21,7 +21,11 @@ const seedDB = async ()=>{
        const random1000=Math.floor(Math.random()*1000);
        const post=new Post({
            location:`${cities[random1000].city}, ${cities[random1000].state}`,
-           title: `${sample(descriptors)} ${sample(places)}`
+           title: `${sample(descriptors)} ${sample(places)}`,
+           image: 'https://source.unsplash.com/collection/483251',
+           description:'  Lorem ipsum dolor sit amet consectetur adipisicing elit. Veniam, voluptates deleniti illum omnis autem labore numquam consequuntur ad alias id vitae! Unde, minima harum. Temporibus repellat perferendis cupiditate ipsum nemo?'
+           
+           
        });
        await post.save();
    }

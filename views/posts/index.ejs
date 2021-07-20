@@ -1,20 +1,25 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Posts</title>
-</head>
-<body>
-    <h1>All Posts</h1>
-    <div>
-        <a href="/posts/new">Add new Post</a>
+<% layout('layouts/boilerplate')%>
+
+<h1>All Campgrounds</h1>
+<div>
+    <a href="/posts/new">Add a Post</a>
+</div>
+<% for (let post of posts){%>
+<div class="card" mb-3>
+    <div class="row">
+        <div class="col-md-4">
+            <img class="img-fluid" alt="" src="<%=post.image%>">
+        </div>
+        <div class="col-md-8">
+            <div class="card-body">
+                <h5 class="card-title"><%= post.title %> </h5>
+                <p class="card-text"><%= post.description %></p>
+                <p class="card-text">
+                    <small class="text-muted"><%= post.location%></small>
+                </p>
+                <a class="btn btn-primary" href="/posts/<%=post._id%>">View Post</a>
+            </div>
+        </div>
     </div>
-    <ul>
-    <% for(let post of posts){  %>
-        <li><a href="/posts/<%= post._id%>"><%= post.title %></a></li>
-     <% } %>
-        </ul>
-</body>
-</html>
+</div>
+<% }%>
