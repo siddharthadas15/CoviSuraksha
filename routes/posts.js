@@ -19,7 +19,7 @@ router.get('/new',isLoggedIn,posts.renderNewForm);
 router.route('/:id')
 .get(catchAsync(posts.showPost))
 .put(isLoggedIn,isAuthor,upload.array('image'),validatePost,catchAsync(posts.updatePost))
-.delete(isLoggedIn,isAuthor,catchAsync(posts.deletePost));;
+.delete(isLoggedIn,isAuthor,catchAsync(posts.deletePost));
 
 router.get('/:id/edit',isLoggedIn,isAuthor,catchAsync(posts.renderEditForm));
     
