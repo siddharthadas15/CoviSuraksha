@@ -1,8 +1,10 @@
 const Post=require('../models/post');
 const {cloudinary}=require('../cloudinary');
-const mbxGeocoding = require("@mapbox/mapbox-sdk/services/geocoding");
-const mapBoxToken = process.env.MAPBOX_TOKEN;
-const geocoder = mbxGeocoding({ accessToken: mapBoxToken });
+
+const maptilerClient = require("@maptiler/client");
+maptilerClient.config.apiKey = process.env.MAPTILER_API_KEY;
+
+
 module.exports.index=async(req,res)=>{
     const posts=await Post.find({});
     res.render('posts/index',{posts});
@@ -15,12 +17,9 @@ module.exports.renderNewForm=(req,res)=>{
 
 
 module.exports.createPost=async (req,res,next)=>{
-  const geoData=await geocoder.forwardGeocode({
-    query:req.body.post.location,
-    limit:1
-  }).send();
-    const post=new Post(req.body.post);
-    post.geometry=geoData.body.features[0].geometry;
+    const geoData = await maptilerClient.geocoding.forward(req.body.post.location, { limit: 1 });
+    const post = new Post(req.body.post);
+    post.geometry= geoData.features[0].geometry;
     post.images = req.files.map(f => ({ url: f.path, filename: f.filename }));
     post.author=req.user._id;
     await post.save();
@@ -63,6 +62,8 @@ module.exports.showPost=async(req,res)=>{
     const {id}=req.params;
     console.log(req.body);
     const post=await Post.findByIdAndUpdate(id,{...req.body.post});
+    const geoData = await maptilerClient.geocoding.forward(req.body.post.location, { limit: 1 });
+    post.geometry= geoData.features[0].geometry;
     const newImages=req.files.map(f => ({ url: f.path, filename: f.filename }));
     post.images.push(...newImages);
     await post.save();

@@ -99,8 +99,8 @@
    
 </div>
 <script>
-    const mapToken = '<%-process.env.MAPBOX_TOKEN%>';
-    const post =<%- JSON.stringify(post) %>
+    const maptilerApiKey = '<%- process.env.MAPTILER_API_KEY %>';
+    const campground = <%- JSON.stringify(post) %>
     console.log(mapToken);
 </script>
 
